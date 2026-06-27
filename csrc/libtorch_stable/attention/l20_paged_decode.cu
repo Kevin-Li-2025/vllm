@@ -354,12 +354,16 @@ void l20_paged_decode_split_out_cuda(
   const cudaStream_t stream = get_current_cuda_stream();
   const dim3 partial_grid(query.size(1), num_splits, query.size(0));
   paged_decode_partial_kernel<<<partial_grid, 256, 0, stream>>>(
-      query.const_data_ptr<half>(),
-      key_cache.const_data_ptr<half>(),
-      value_cache.const_data_ptr<half>(),
+      reinterpret_cast<const half*>(
+          query.const_data_ptr<torch::headeronly::Half>()),
+      reinterpret_cast<const half*>(
+          key_cache.const_data_ptr<torch::headeronly::Half>()),
+      reinterpret_cast<const half*>(
+          value_cache.const_data_ptr<torch::headeronly::Half>()),
       block_table.const_data_ptr<int>(),
       seq_lens.const_data_ptr<int>(),
-      partial_output.mutable_data_ptr<half>(),
+      reinterpret_cast<half*>(
+          partial_output.mutable_data_ptr<torch::headeronly::Half>()),
       partial_max.mutable_data_ptr<float>(),
       partial_sum.mutable_data_ptr<float>(),
       query.size(1),
@@ -375,10 +379,12 @@ void l20_paged_decode_split_out_cuda(
       kHeadDim / 2,
       0,
       stream>>>(
-      partial_output.const_data_ptr<half>(),
+      reinterpret_cast<const half*>(
+          partial_output.const_data_ptr<torch::headeronly::Half>()),
       partial_max.const_data_ptr<float>(),
       partial_sum.const_data_ptr<float>(),
-      output.mutable_data_ptr<half>(),
+      reinterpret_cast<half*>(
+          output.mutable_data_ptr<torch::headeronly::Half>()),
       query.size(1),
       num_splits);
   const cudaError_t err = cudaGetLastError();
