@@ -483,6 +483,13 @@ void paged_attention_v2(
     const int64_t blocksparse_vert_stride, const int64_t blocksparse_block_size,
     const int64_t blocksparse_head_sliding_step);
 
+void l20_paged_decode_split_out_cuda(
+    torch::stable::Tensor& query, torch::stable::Tensor& key_cache,
+    torch::stable::Tensor& value_cache, torch::stable::Tensor& block_table,
+    torch::stable::Tensor& seq_lens, torch::stable::Tensor& partial_output,
+    torch::stable::Tensor& partial_max, torch::stable::Tensor& partial_sum,
+    torch::stable::Tensor& output, int64_t max_seq_len, int64_t split_size);
+
 // Cache ops (shared CUDA/ROCm)
 void swap_blocks(torch::stable::Tensor& src, torch::stable::Tensor& dst,
                  int64_t block_size_in_bytes,

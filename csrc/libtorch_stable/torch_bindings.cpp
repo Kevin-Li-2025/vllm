@@ -630,6 +630,14 @@ STABLE_TORCH_LIBRARY_FRAGMENT(_C, ops) {
       "    int tp_rank, int blocksparse_local_blocks,"
       "    int blocksparse_vert_stride, int blocksparse_block_size,"
       "    int blocksparse_head_sliding_step) -> ()");
+
+  ops.def(
+      "l20_paged_decode_split_out("
+      "Tensor query, Tensor key_cache, Tensor value_cache, "
+      "Tensor block_table, Tensor seq_lens, "
+      "Tensor(a!) partial_output, Tensor(b!) partial_max, "
+      "Tensor(c!) partial_sum, Tensor(d!) output, "
+      "int max_seq_len, int split_size) -> ()");
 }
 
 STABLE_TORCH_LIBRARY_IMPL(_C, CUDA, ops) {
@@ -756,6 +764,8 @@ STABLE_TORCH_LIBRARY_IMPL(_C, CUDA, ops) {
 
   ops.impl("paged_attention_v1", TORCH_BOX(&paged_attention_v1));
   ops.impl("paged_attention_v2", TORCH_BOX(&paged_attention_v2));
+  ops.impl("l20_paged_decode_split_out",
+           TORCH_BOX(&l20_paged_decode_split_out_cuda));
 }
 
 // TODO: Remove this once ROCm upgrade to torch 2.11.
